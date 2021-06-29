@@ -34,7 +34,7 @@ class PairTersoffTest : public Pair {
   virtual void init_style();
   double init_one(int, int);
 
-  static const int NPARAMS_PER_LINE = 22;
+  static const int NPARAMS_PER_LINE = 21;
 
  protected:
 
@@ -89,8 +89,8 @@ class PairTersoffTest : public Pair {
 
   virtual void ters_zetaterm_d(double, double *, double, double *, double,
                                double *, double *, double *, Param *);
-  void costheta_d(double, double *, double, double *, double,
-                  double *, double *, double *);
+  void costheta_d(double *, double, double *, double,
+                  double *, double *, double *,  Param *);
 
   // inlined functions for efficiency
 
@@ -103,12 +103,12 @@ class PairTersoffTest : public Pair {
     return param->gamma*(1.0 + ters_c/ters_d - ters_c / (ters_d + hcth*hcth));
   }
 
-  inline double ters_gijk_d(const double costheta,
+  inline double ters_gijk_d(const double pi, const double costheta,
                             const Param * const param) const {
     const double ters_c = param->c * param->c;
     const double ters_d = param->d * param->d;
     const double hcth = param->h - costheta;
-    const double numerator = -2.0 * ters_c * hcth;
+    const double numerator = -2.0 * ters_c * hcth * (pi / (pi - param->theta0));
     const double denominator = 1.0/(ters_d + hcth*hcth);
     return param->gamma*numerator*denominator*denominator;
   }

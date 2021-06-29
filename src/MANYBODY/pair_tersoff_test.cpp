@@ -448,7 +448,6 @@ void PairTersoffTest::read_file(char *file)
         params[nparams].kelement  = kelement;
         params[nparams].powerm    = values.next_double();
         params[nparams].gamma     = values.next_double();
-        params[nparams].lam3      = values.next_double();
         params[nparams].c         = values.next_double();
         params[nparams].d         = values.next_double();
         params[nparams].h         = values.next_double();
@@ -665,7 +664,7 @@ double PairTersoffTest::ters_fc_d(double r, Param *param)
 
   if (r < ters_R) return 0.0;
   if (r > ters_S) return 0.0;
-  return -(MY_PI2/(ters_S-ters_R)) * sin(MY_PI2*(r - ters_R)/(ters_S-ters_R));
+  return -(MY_PI2/(ters_S-ters_R)) * sin(MY_PI*(r - ters_R)/(ters_S-ters_R));
 }
 
 /* ---------------------------------------------------------------------- */
@@ -752,8 +751,8 @@ void PairTersoffTest::ters_zetaterm_d(double prefactor,
   angle = acos(cos_theta);
   cos_theta = cos(MY_PI*((angle - param->theta0) / (MY_PI - param->theta0)));
   gijk = ters_gijk(cos_theta,param);
-  gijk_d = ters_gijk_d(cos_theta,param);
-  costheta_d(param->theta0, rij_hat,rij,rik_hat,rik,dcosdri,dcosdrj,dcosdrk);
+  gijk_d = ters_gijk_d(MY_PI,cos_theta,param);
+  costheta_d(rij_hat,rij,rik_hat,rik,dcosdri,dcosdrj,dcosdrk,param);
 
   // compute the derivative wrt Ri
   // dri = -dfc*gijk*ex_delr*rik_hat;
@@ -787,13 +786,18 @@ void PairTersoffTest::ters_zetaterm_d(double prefactor,
 
 /* ---------------------------------------------------------------------- */
 
-void PairTersoffTest::costheta_d(double t0, double *rij_hat, double rij,
+void PairTersoffTest::costheta_d(double *rij_hat, double rij,
                              double *rik_hat, double rik,
-                             double *dri, double *drj, double *drk)
+                             double *dri, double *drj, double *drk, Param *param)
 {
   // first element is devative wrt Ri, second wrt Rj, third wrt Rk
 
-  double cos_theta = (MY_PI/(MY_PI - t0))*vec3_dot(rij_hat,rik_hat);
+  double angle;
+  double cos_theta = vec3_dot(rij_hat,rik_hat);
+  if (cos_theta > 1.0) (cos_theta = 1.0);
+  if (cos_theta < -1.0) (cos_theta = -1.0);
+  angle = acos(cos_theta);
+  cos_theta = cos(MY_PI*((angle - param->theta0) / (MY_PI - param->theta0)));
 
   vec3_scaleadd(-cos_theta,rij_hat,rik_hat,drj);
   vec3_scale(1.0/rij,drj,drj);
