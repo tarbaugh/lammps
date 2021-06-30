@@ -103,12 +103,12 @@ class PairTersoffTest : public Pair {
     return param->gamma*(1.0 + ters_c/ters_d - ters_c / (ters_d + hcth*hcth));
   }
 
-  inline double ters_gijk_d(const double pi, const double costheta,
+  inline double ters_gijk_d(const double pi, const double sintheta, const double costheta,
                             const Param * const param) const {
     const double ters_c = param->c * param->c;
     const double ters_d = param->d * param->d;
     const double hcth = param->h - costheta;
-    const double numerator = -2.0 * ters_c * hcth * (pi / (pi - param->theta0));
+    const double numerator = 2.0 * ters_c * hcth * sintheta * (pi / (pi - param->theta0));
     const double denominator = 1.0/(ters_d + hcth*hcth);
     return param->gamma*numerator*denominator*denominator;
   }

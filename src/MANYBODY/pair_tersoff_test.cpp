@@ -726,7 +726,7 @@ void PairTersoffTest::ters_zetaterm_d(double prefactor,
                                   double *dri, double *drj, double *drk,
                                   Param *param)
 {
-  double gijk,gijk_d,ex_delr,ex_delr_d,ex_delr_dj,ex_delr_dk,fc,dfc,cos_theta,tmp,angle;
+  double gijk,gijk_d,ex_delr,ex_delr_d,ex_delr_dj,ex_delr_dk,fc,dfc,cos_theta,sin_theta,tmp,angle;
   double dcosdri[3],dcosdrj[3],dcosdrk[3];
 
   fc = ters_fc(rik,param);
@@ -750,8 +750,9 @@ void PairTersoffTest::ters_zetaterm_d(double prefactor,
   if (cos_theta < -1.0) (cos_theta = -1.0);
   angle = acos(cos_theta);
   cos_theta = cos(MY_PI*((angle - param->theta0) / (MY_PI - param->theta0)));
+  sin_theta = sin(MY_PI*((angle - param->theta0) / (MY_PI - param->theta0)));
   gijk = ters_gijk(cos_theta,param);
-  gijk_d = ters_gijk_d(MY_PI,cos_theta,param);
+  gijk_d = ters_gijk_d(MY_PI,sin_theta, cos_theta,param);
   costheta_d(rij_hat,rij,rik_hat,rik,dcosdri,dcosdrj,dcosdrk,param);
 
   // compute the derivative wrt Ri
@@ -792,17 +793,17 @@ void PairTersoffTest::costheta_d(double *rij_hat, double rij,
 {
   // first element is devative wrt Ri, second wrt Rj, third wrt Rk
 
-  double angle;
+  double angle, sin_theta;
   double cos_theta = vec3_dot(rij_hat,rik_hat);
   if (cos_theta > 1.0) (cos_theta = 1.0);
   if (cos_theta < -1.0) (cos_theta = -1.0);
   angle = acos(cos_theta);
-  cos_theta = cos(MY_PI*((angle - param->theta0) / (MY_PI - param->theta0)));
+  sin_theta = sin(angle);
 
   vec3_scaleadd(-cos_theta,rij_hat,rik_hat,drj);
-  vec3_scale(1.0/rij,drj,drj);
+  vec3_scale(-1.0/(rij*sin_theta),drj,drj);
   vec3_scaleadd(-cos_theta,rik_hat,rij_hat,drk);
-  vec3_scale(1.0/rik,drk,drk);
+  vec3_scale(-1.0/(rik*sin_theta),drk,drk);
   vec3_add(drj,drk,dri);
   vec3_scale(-1.0,dri,dri);
 }
