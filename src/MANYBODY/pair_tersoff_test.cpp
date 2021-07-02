@@ -453,11 +453,8 @@ void PairTersoffTest::read_file(char *file)
         params[nparams].h         = values.next_double();
         params[nparams].powern    = values.next_double();
         params[nparams].beta      = values.next_double();
-        params[nparams].lam2      = values.next_double();
         params[nparams].bigb      = values.next_double();
         params[nparams].bigr      = values.next_double();
-        params[nparams].bigd      = values.next_double();
-        params[nparams].lam1      = values.next_double();
         params[nparams].biga      = values.next_double();
         params[nparams].muij      = values.next_double();
         params[nparams].muik      = values.next_double();
@@ -480,12 +477,8 @@ void PairTersoffTest::read_file(char *file)
           params[nparams].d < 0.0 ||
           params[nparams].powern < 0.0 ||
           params[nparams].beta < 0.0 ||
-          params[nparams].lam2 < 0.0 ||
           params[nparams].bigb < 0.0 ||
           params[nparams].bigr < 0.0 ||
-          params[nparams].bigd < 0.0 ||
-          params[nparams].bigd > params[nparams].bigr ||
-          params[nparams].lam1 < 0.0 ||
           params[nparams].biga < 0.0 ||
           params[nparams].powerm - params[nparams].powermint != 0.0 ||
           (params[nparams].powermint != 3 &&

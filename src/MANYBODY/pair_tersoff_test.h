@@ -34,7 +34,7 @@ class PairTersoffTest : public Pair {
   virtual void init_style();
   double init_one(int, int);
 
-  static const int NPARAMS_PER_LINE = 21;
+  static const int NPARAMS_PER_LINE = 18;
 
  protected:
 
